@@ -1,3 +1,7 @@
+import os
+import json
+import commentjson
+
 from random import randint
 from typing import TYPE_CHECKING, Dict, Sequence
 
@@ -8,7 +12,7 @@ from app.xray import operations
 from app.xray.config import XRayConfig
 from app.xray.core import XRayCore
 from app.xray.node import XRayNode
-from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH, XRAY_JSON
+from config import XRAY_ASSETS_PATH, XRAY_EXECUTABLE_PATH, XRAY_JSON, V2RAY_CONFIG
 from xray_api import XRay as XRayAPI
 from xray_api import exceptions
 from xray_api import exceptions as exc
@@ -17,12 +21,45 @@ from xray_api import types
 
 core = XRayCore(XRAY_EXECUTABLE_PATH, XRAY_ASSETS_PATH)
 
+
+def init_config_from_v2ray():
+    if os.path.exists(XRAY_JSON):
+        return
+    v2ray_config = {}
+    try:
+        for filename in os.listdir(V2RAY_CONFIG):
+            if filename.endswith('.json'):
+                filepath = os.path.join(V2RAY_CONFIG, filename)
+                with open(filepath, 'r', encoding='utf-8') as file:
+                    json_data = commentjson.load(file)
+                    merge_dict(v2ray_config, json_data)
+        if 'inbounds' in v2ray_config:
+            with open(XRAY_JSON, 'w') as f:
+                f.write(json.dumps(v2ray_config, indent=4))
+    finally:
+        return
+
+
+def merge_dict(dict1, dict2):
+    for key, value in dict2.items():
+        if key in dict1:
+            if isinstance(dict1[key], list) and isinstance(value, list):
+                dict1[key].extend(value)
+            elif isinstance(dict1[key], dict) and isinstance(value, dict):
+                merge_dict(dict1[key], value)
+            else:
+                dict1[key] = value
+        else:
+            dict1[key] = value
+
+
 # Search for a free API port
 try:
     for api_port in range(randint(10000, 60000), 65536):
         if not check_port(api_port):
             break
 finally:
+    init_config_from_v2ray()
     config = XRayConfig(XRAY_JSON, api_port=api_port)
     del api_port
 
