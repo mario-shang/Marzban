@@ -11,7 +11,8 @@ class ClashConfiguration(object):
             'proxies': [],
             'proxy-groups': [],
             # Some clients rely on "rules" option and will fail without it.
-            'rules': []
+            'rules': [],
+            'user': {}
         }
         self.proxy_remarks = []
         self.mux_template = render_template(MUX_TEMPLATE)
@@ -157,17 +158,20 @@ class ClashConfiguration(object):
             node['alterId'] = 0
             node['cipher'] = 'auto'
             self.data['proxies'].append(node)
+            self.data['user']['vmess'] = settings['id']
             self.proxy_remarks.append(remark)
 
         if inbound['protocol'] == 'trojan':
             node['password'] = settings['password']
             self.data['proxies'].append(node)
+            self.data['user']['trojan'] = settings['password']
             self.proxy_remarks.append(remark)
 
         if inbound['protocol'] == 'shadowsocks':
             node['password'] = settings['password']
             node['cipher'] = settings['method']
             self.data['proxies'].append(node)
+            self.data['user']['shadowsocks'] = settings['password']
             self.proxy_remarks.append(remark)
 
 
@@ -239,6 +243,7 @@ class ClashMetaConfiguration(ClashConfiguration):
             node['alterId'] = 0
             node['cipher'] = 'auto'
             self.data['proxies'].append(node)
+            self.data['user']['vmess'] = settings['id']
             self.proxy_remarks.append(remark)
 
         if inbound['protocol'] == 'vless':
@@ -248,6 +253,7 @@ class ClashMetaConfiguration(ClashConfiguration):
                 node['flow'] = settings.get('flow', '')
 
             self.data['proxies'].append(node)
+            self.data['user']['vless'] = settings['id']
             self.proxy_remarks.append(remark)
 
         if inbound['protocol'] == 'trojan':
@@ -257,10 +263,12 @@ class ClashMetaConfiguration(ClashConfiguration):
                 node['flow'] = settings.get('flow', '')
 
             self.data['proxies'].append(node)
+            self.data['user']['trojan'] = settings['password']
             self.proxy_remarks.append(remark)
 
         if inbound['protocol'] == 'shadowsocks':
             node['password'] = settings['password']
             node['cipher'] = settings['method']
             self.data['proxies'].append(node)
+            self.data['user']['shadowsocks'] = settings['password']
             self.proxy_remarks.append(remark)
