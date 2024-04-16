@@ -226,7 +226,9 @@ class XRayConfig(dict):
                                 f"You need to provide publicKey in realitySettings of {inbound['tag']}")
 
                     try:
-                        settings['sid'] = tls_settings.get('shortIds')[0]
+                        for shortId in tls_settings.get('shortIds', []):
+                          if shortId != '':
+                            settings['sid'] = shortId
                     except (IndexError, TypeError):
                         raise ValueError(
                             f"You need to define at least one shortID in realitySettings of {inbound['tag']}")
