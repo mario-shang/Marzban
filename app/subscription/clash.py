@@ -213,8 +213,8 @@ class ClashMetaConfiguration(ClashConfiguration):
         if fp:
             node['client-fingerprint'] = fp
         if pbk:
-            self.data.user['pbk'] = pbk
-            self.data.user['sid'] = sid
+            self.data['user']['pbk'] = pbk
+            self.data['user']['sid'] = sid
             node['reality-opts'] = {"public-key": pbk, "short-id": sid}
 
         return node
