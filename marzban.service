@@ -1,0 +1,16 @@
+[Unit]
+Description=marzban
+After=network.target remote-fs.target nss-lookup.target
+ 
+[Service]
+Type=simple
+WorkingDirectory=/root/Marzban
+ExecStart=python3 main.py > /root/Marzban/marzban.log &
+ExecStop=ps aux | grep marzban | awk 'NR==1{print $2}' | xargs kill -9
+ExecReload=ps aux | grep marzban | awk 'NR==1{print $2}' | xargs kill -9 && python3 main.py > /root/Marzban/marzban.log &
+ 
+[Install]
+WantedBy=multi-user.target
+ 
+[Install]
+WantedBy=multi-user.target
