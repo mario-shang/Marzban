@@ -23,6 +23,7 @@ VITE_BASE_API = f"http://127.0.0.1:{UVICORN_PORT}/api/" \
 
 XRAY_JSON = config("XRAY_JSON", default="./xray_config.json")
 V2RAY_CONFIG = config("V2RAY_CONFIG", default="/etc/v2ray-agent/xray/conf/")
+DOMAIN = config("DOMAIN", default="0.0.0.0")
 XRAY_FALLBACKS_INBOUND_TAG = config("XRAY_FALLBACKS_INBOUND_TAG", cast=str, default="") or config(
     "XRAY_FALLBACK_INBOUND_TAG", cast=str, default=""
 )

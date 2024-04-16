@@ -2,7 +2,7 @@ import yaml
 import json
 from app.templates import render_template
 
-from config import CLASH_SUBSCRIPTION_TEMPLATE, MUX_TEMPLATE
+from config import CLASH_SUBSCRIPTION_TEMPLATE, MUX_TEMPLATE, DOMAIN
 
 
 class ClashConfiguration(object):
@@ -12,7 +12,7 @@ class ClashConfiguration(object):
             'proxy-groups': [],
             # Some clients rely on "rules" option and will fail without it.
             'rules': [],
-            'user': {}
+            'user': {"domain": DOMAIN}
         }
         self.proxy_remarks = []
         self.mux_template = render_template(MUX_TEMPLATE)
@@ -213,6 +213,8 @@ class ClashMetaConfiguration(ClashConfiguration):
         if fp:
             node['client-fingerprint'] = fp
         if pbk:
+            self.data.user['pbk'] = pbk
+            self.data.user['sid'] = sid
             node['reality-opts'] = {"public-key": pbk, "short-id": sid}
 
         return node
